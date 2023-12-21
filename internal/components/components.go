@@ -67,6 +67,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/splunkhecexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/sumologicexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/tencentcloudlogserviceexporter"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/zipkinexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/asapauthextension"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/extension/awsproxy"
@@ -358,6 +359,7 @@ func Components() (otelcol.Factories, error) {
 		splunkhecexporter.NewFactory(),
 		sumologicexporter.NewFactory(),
 		tencentcloudlogserviceexporter.NewFactory(),
+		ydbexporter.NewFactory(),
 		zipkinexporter.NewFactory(),
 	}
 	factories.Exporters, err = exporter.MakeFactoryMap(exporters...)

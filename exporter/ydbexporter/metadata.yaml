@@ -1,0 +1,9 @@
+type: ydb
+
+status:
+  class: exporter
+  stability:
+    alpha: [logs, traces, metrics]
+  distributions: [contrib]
+  codeowners:
+    active: [hanjm, dmitryax, Frapschen]

@@ -202,6 +202,7 @@ import (
 	webhookeventreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/webhookeventreceiver"
 	windowseventlogreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowseventlogreceiver"
 	windowsperfcountersreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/windowsperfcountersreceiver"
+	ydbexporter "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter"
 	zipkinreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zipkinreceiver"
 	zookeeperreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/zookeeperreceiver"
 )
@@ -385,6 +386,7 @@ func components() (otelcol.Factories, error) {
 		sumologicexporter.NewFactory(),
 		syslogexporter.NewFactory(),
 		tencentcloudlogserviceexporter.NewFactory(),
+		ydbexporter.NewFactory(),
 		zipkinexporter.NewFactory(),
 	)
 	if err != nil {

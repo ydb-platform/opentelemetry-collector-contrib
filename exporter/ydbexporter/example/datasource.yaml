@@ -1,0 +1,10 @@
+# config file version
+apiVersion: 1
+
+datasources:
+  - name: YDB
+    type: ydbtech-ydb-datasource
+    jsonData:
+      authKind: "Anonymous"
+      endpoint: grpc://ydb-local:2136
+      dbLocation: /local

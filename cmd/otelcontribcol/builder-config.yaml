@@ -90,6 +90,7 @@ exporters:
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/sumologicexporter v0.92.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/syslogexporter v0.92.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/tencentcloudlogserviceexporter v0.92.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter v0.92.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/zipkinexporter v0.92.0
 
 processors:
@@ -251,6 +252,7 @@ replaces:
   - github.com/open-telemetry/opentelemetry-collector-contrib/exporter/mezmoexporter => ../../exporter/mezmoexporter
   - github.com/open-telemetry/opentelemetry-collector-contrib/exporter/clickhouseexporter => ../../exporter/clickhouseexporter
   - github.com/open-telemetry/opentelemetry-collector-contrib/exporter/cassandraexporter => ../../exporter/cassandraexporter
+  - github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter => ../../exporter/ydbexporter
   - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/udplogreceiver => ../../receiver/udplogreceiver
   - github.com/open-telemetry/opentelemetry-collector-contrib/internal/splunk => ../../internal/splunk
   - github.com/open-telemetry/opentelemetry-collector-contrib/internal/datadog => ../../internal/datadog

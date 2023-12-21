@@ -1,0 +1,149 @@
+version: "3"
+
+networks:
+  otel_ydb:
+
+volumes:
+  ydb_certs:
+
+services:
+  otelcollector:
+    build:
+      context: ../../../local
+      dockerfile: ../exporter/ydbexporter/example/Dockerfile
+    # Uncomment the next line to use a preexisting image
+    # image: otelcontribcol:latest
+    container_name: otel
+    command:
+      - "--config=/etc/otel-collector-config.yml"
+      - "--set=service.telemetry.logs.level=DEBUG"
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+      - ydb_certs:/ydb_certs
+    ports:
+      - "4317:4317"   # otlp receiver
+      - "1888:1888"   # pprof extension
+      - "13133:13133" # health_check extension
+      - "55679:55679" # zpages extension
+      - "24224:24224" # fluentforwarder
+      - "24224:24224/udp" # fluentforwarder
+    depends_on:
+      ydb-local:
+        condition: service_healthy
+    networks:
+      - otel_ydb
+    links:
+      - ydb-local
+
+  ydb-local:
+    image: cr.yandex/yc/yandex-docker-local-ydb:latest
+    hostname: ydb-local
+    ports:
+      - "2135:2135"
+      - "2136:2136"
+      - "8765:8765"
+    expose:
+      - "2135"
+      - "2136"
+      - "8765"
+    networks:
+      - otel_ydb
+    volumes:
+          - ydb_certs:/ydb_certs
+          #- ./ydb_data:/ydb_data
+    environment:
+      - YDB_DEFAULT_LOG_LEVEL=DEBUG
+      - YDB_USE_IN_MEMORY_PDISKS=true
+      - GRPC_TLS_PORT=2135
+      - GRPC_PORT=2136
+    healthcheck:
+      start_period: 5s
+      interval: 5s
+      timeout: 1s
+      retries: 5
+      test: [
+              "CMD",
+              "/ydb",
+              "--endpoint", "grpcs://localhost:2135",
+              "--database", "/local",
+              "--ca-file", "/ydb_certs/ca.pem",
+              "monitoring", "healthcheck"
+      ]
+
+  # gauge metrics generator
+  gauge-metrics-generator:
+    build:
+      context: ../../../cmd/telemetrygen/
+    command:
+      - metrics
+      - --metric-type=Gauge
+      - --otlp-endpoint=otelcollector:4317
+      - --otlp-insecure
+      - --rate=1000
+      - --duration=1h
+    networks:
+      - otel_ydb
+    depends_on:
+      - otelcollector
+
+  # sum metrics generator
+  sum-metrics-generator:
+    build:
+      context: ../../../cmd/telemetrygen/
+    command:
+      - metrics
+      - --metric-type=Sum
+      - --otlp-endpoint=otelcollector:4317
+      - --otlp-insecure
+      - --rate=1000
+      - --duration=1h
+    networks:
+      - otel_ydb
+    depends_on:
+      - otelcollector
+
+  # logs generator
+  logs-generator:
+    build:
+      context: ../../../cmd/telemetrygen/
+    command:
+      - logs
+      - --otlp-endpoint=otelcollector:4317
+      - --otlp-insecure
+      - --rate=1000
+      - --duration=1h
+    networks:
+      - otel_ydb
+    depends_on:
+      - otelcollector
+
+  # traces generator
+  traces-generator:
+    build:
+      context: ../../../cmd/telemetrygen/
+    command:
+      - traces
+      - --otlp-endpoint=otelcollector:4317
+      - --otlp-insecure
+      - --rate=1000
+      - --duration=1h
+    networks:
+      - otel_ydb
+    depends_on:
+      - otelcollector
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
+      - ./datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+    environment:
+      GF_INSTALL_PLUGINS: ydbtech-ydb-datasource
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: ydbtech-ydb-datasource
+    ports:
+      - "3001:3000"
+    networks:
+      - otel_ydb
+    depends_on:
+      ydb-local:
+        condition: service_healthy

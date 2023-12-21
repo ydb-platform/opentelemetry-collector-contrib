@@ -73,6 +73,7 @@ body:
       - exporter/sumologic
       - exporter/syslog
       - exporter/tencentcloudlogservice
+      - exporter/ydb
       - exporter/zipkin
       - extension/asapauth
       - extension/awsproxy

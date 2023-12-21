@@ -49,6 +49,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/splunkhecexporter v0.92.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/sumologicexporter v0.92.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/tencentcloudlogserviceexporter v0.92.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter v0.92.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/zipkinexporter v0.92.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/asapauthextension v0.92.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/awsproxy v0.92.0
@@ -447,6 +448,7 @@ require (
 	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/jonboulle/clockwork v0.3.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -619,6 +621,8 @@ require (
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
+	github.com/ydb-platform/ydb-go-genproto v0.0.0-20231012155159-f85a672542fd // indirect
+	github.com/ydb-platform/ydb-go-sdk/v3 v3.54.2 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
@@ -832,6 +836,8 @@ replace github.com/open-telemetry/opentelemetry-collector-contrib/exporter/sumol
 replace github.com/open-telemetry/opentelemetry-collector-contrib/exporter/tencentcloudlogserviceexporter => ./exporter/tencentcloudlogserviceexporter
 
 replace github.com/open-telemetry/opentelemetry-collector-contrib/exporter/elasticsearchexporter => ./exporter/elasticsearchexporter
+
+replace github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter => ./exporter/ydbexporter
 
 replace github.com/open-telemetry/opentelemetry-collector-contrib/exporter/zipkinexporter => ./exporter/zipkinexporter
 

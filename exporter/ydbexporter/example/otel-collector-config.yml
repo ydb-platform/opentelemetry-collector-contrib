@@ -1,0 +1,64 @@
+receivers:
+  fluentforward:
+    endpoint: 0.0.0.0:24224
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+processors:
+  batch:
+    send_batch_size: 100000
+    timeout: 5s
+  memory_limiter:
+    check_interval: 2s
+    limit_mib: 1800
+    spike_limit_mib: 500
+  resourcedetection/system:
+    detectors: [ "system" ]
+    system:
+      hostname_sources: [ "os" ]
+  resource:
+    attributes:
+      - key: service.name
+        value: "serviceName"
+        action: upsert
+exporters:
+  ydb:
+    endpoint: grpcs://ydb-local:2135
+    auth_type: anonymous
+    certificate_path: /ydb_certs/ca.pem
+    database: /local
+    metrics_table:
+      name: otel_metrics
+      ttl : 168h
+    logs_table:
+      name: otel_logs
+      ttl: 72h
+    traces_table:
+      name: otel_traces
+      ttl: 24h
+    timeout: 10s
+    sending_queue:
+      queue_size: 100
+extensions:
+  health_check:
+  pprof:
+  zpages:
+  memory_ballast:
+    size_mib: 1000
+
+service:
+  extensions: [ pprof, zpages, health_check ]
+  pipelines:
+    metrics:
+      receivers: [ otlp ]
+      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
+      exporters: [ ydb ]
+    logs:
+      receivers: [ fluentforward, otlp ]
+      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
+      exporters: [ ydb ]
+    traces:
+      receivers: [ otlp ]
+      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
+      exporters: [ ydb ]
