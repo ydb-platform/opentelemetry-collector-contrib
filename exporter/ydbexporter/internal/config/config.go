@@ -1,13 +1,9 @@
 package config
 
 import (
-	"time"
-
-	_ "github.com/ydb-platform/ydb-go-sdk/v3"
-	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/configopaque"
-
 	"go.opentelemetry.io/collector/exporter/exporterhelper"
+	"time"
 )
 
 type TableConfig struct {
@@ -47,31 +43,4 @@ type Config struct {
 	LogsTable TableConfig `mapstructure:"logs_table"`
 	// TracesTable is the config for traces table.
 	TracesTable TableConfig `mapstructure:"traces_table"`
-}
-
-func DefaultConfig() component.Config {
-	queueSettings := exporterhelper.NewDefaultQueueSettings()
-	queueSettings.NumConsumers = 1
-
-	return &Config{
-		TimeoutSettings:  exporterhelper.NewDefaultTimeoutSettings(),
-		QueueSettings:    queueSettings,
-		ConnectionParams: map[string]string{},
-		Database:         defaultDatabase,
-		MetricsTable: TableConfig{
-			Name:            defaultMetricsTableName,
-			TTL:             defaultTTL,
-			PartitionsCount: defaultPartitionsCount,
-		},
-		LogsTable: TableConfig{
-			Name:            defaultLogsTableName,
-			TTL:             defaultTTL,
-			PartitionsCount: defaultPartitionsCount,
-		},
-		TracesTable: TableConfig{
-			Name:            defaultTracesTableName,
-			TTL:             defaultTTL,
-			PartitionsCount: defaultPartitionsCount,
-		},
-	}
 }

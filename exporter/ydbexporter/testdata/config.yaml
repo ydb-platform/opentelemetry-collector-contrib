@@ -1,0 +1,31 @@
+ydb:
+  endpoint: grpcs://localhost:2135
+ydb/full:
+  auth_type: accessToken
+  endpoint: grpcs://localhost:2135
+  username: foo
+  password: bar
+  access_token: token
+  service_account_key: key
+  certificate_path: /ydb_certs/ca.pem
+  database: local
+  logs_table:
+    ttl: 72h
+    name: otel_logs
+    partitions_count: 1
+  traces_table:
+    ttl: 72h
+    name: otel_traces
+    partitions_count: 1
+  metrics_table:
+    ttl: 72h
+    name: otel_metrics
+    partitions_count: 1
+  connection_params:
+    param: param
+  timeout: 5s
+  sending_queue:
+    queue_size: 100
+    storage: file_storage/ydb
+ydb/invalid-endpoint:
+  endpoint: localhost:2135
