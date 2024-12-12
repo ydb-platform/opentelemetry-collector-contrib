@@ -3,12 +3,12 @@ package ydbexporter
 import (
 	"context"
 	"fmt"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/config"
 
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/exporter"
 	"go.opentelemetry.io/collector/exporter/exporterhelper"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/config"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/logs"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/metadata"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/metrics"
@@ -19,7 +19,7 @@ import (
 func NewFactory() exporter.Factory {
 	return exporter.NewFactory(
 		metadata.Type,
-		config.DefaultConfig,
+		DefaultConfig,
 		exporter.WithLogs(createLogsExporter, metadata.LogsStability),
 		exporter.WithTraces(createTracesExporter, metadata.TracesStability),
 		exporter.WithMetrics(createMetricExporter, metadata.MetricsStability),

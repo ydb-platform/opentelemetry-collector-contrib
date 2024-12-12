@@ -4,13 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/url"
-	"strings"
-
+	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/config"
 	"github.com/ydb-platform/ydb-go-sdk/v3"
 	"go.uber.org/zap"
-
-	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/config"
+	"net/url"
 )
 
 type AuthType string
@@ -27,6 +24,8 @@ var (
 	errUserAndPasswordRequired = errors.New("username and password required for userPassword authentication")
 	errAccessTokenRequired     = errors.New("access token required for accessToken authentication")
 	unKnownAuthType            = errors.New("unknown authentication type")
+	errOnlyGrpcSupport         = errors.New("only gRPC and gRPCs schemes are supported")
+	errEndpointIsNotSpecified  = errors.New("endpoint is not specified")
 )
 
 type Factory struct {
@@ -41,18 +40,15 @@ func NewFactory(cfg *config.Config, logger *zap.Logger) *Factory {
 func (f *Factory) buildDSN() (string, error) {
 	dsn, err := url.Parse(f.cfg.Endpoint + f.cfg.Database)
 	if err != nil {
-		return "", fmt.Errorf("cannot parse databasse URL: %w", err)
+		return "", fmt.Errorf("cannot parse database URL: %w", err)
 	}
 
 	if dsn.Scheme != "grpc" && dsn.Scheme != "grpcs" {
-		return "", fmt.Errorf("only gRPC and gRPCs schemes are supported")
+		return "", errOnlyGrpcSupport
 	}
 
 	if dsn.Host == "" || dsn.Path == "" {
-		return "", fmt.Errorf("endpoint is not specified")
-	}
-	if !strings.HasPrefix(dsn.Path, "/") {
-		return "", fmt.Errorf("database name should start with /")
+		return "", errEndpointIsNotSpecified
 	}
 
 	return dsn.String(), nil
