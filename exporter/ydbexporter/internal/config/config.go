@@ -7,6 +7,17 @@ import (
 	"time"
 )
 
+const (
+	defaultEndpoint         = "grpc://localhost:2136"
+	defaultAuthType         = "anonymous"
+	defaultDatabase         = "/local"
+	defaultLogsTableName    = "otel_logs"
+	defaultMetricsTableName = "otel_metrics"
+	defaultTracesTableName  = "otel_traces"
+	defaultPartitionsCount  = 64
+	defaultTTL              = 0
+)
+
 type TableConfig struct {
 	// TTL is The data time-to-live example 30m, 48h. 0 means no ttl.
 	TTL time.Duration `mapstructure:"ttl"`
@@ -45,17 +56,6 @@ type Config struct {
 	// TracesTable is the config for traces table.
 	TracesTable TableConfig `mapstructure:"traces_table"`
 }
-
-const (
-	defaultEndpoint         = "grpc://localhost:2136"
-	defaultAuthType         = "anonymous"
-	defaultDatabase         = "/local"
-	defaultLogsTableName    = "otel_logs"
-	defaultMetricsTableName = "otel_metrics"
-	defaultTracesTableName  = "otel_traces"
-	defaultPartitionsCount  = 64
-	defaultTTL              = 0
-)
 
 func WithDefaultConfig(fns ...func(*Config)) *Config {
 	cfg := DefaultConfig().(*Config)
