@@ -1,13 +1,21 @@
 package config
 
 import (
-	"time"
-
-	_ "github.com/ydb-platform/ydb-go-sdk/v3"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/configopaque"
-
 	"go.opentelemetry.io/collector/exporter/exporterhelper"
+	"time"
+)
+
+const (
+	defaultEndpoint         = "grpc://localhost:2136"
+	defaultAuthType         = "anonymous"
+	defaultDatabase         = "/local"
+	defaultLogsTableName    = "otel_logs"
+	defaultMetricsTableName = "otel_metrics"
+	defaultTracesTableName  = "otel_traces"
+	defaultPartitionsCount  = 64
+	defaultTTL              = 0
 )
 
 type TableConfig struct {
@@ -49,6 +57,14 @@ type Config struct {
 	TracesTable TableConfig `mapstructure:"traces_table"`
 }
 
+func WithDefaultConfig(fns ...func(*Config)) *Config {
+	cfg := DefaultConfig().(*Config)
+	for _, fn := range fns {
+		fn(cfg)
+	}
+	return cfg
+}
+
 func DefaultConfig() component.Config {
 	queueSettings := exporterhelper.NewDefaultQueueSettings()
 	queueSettings.NumConsumers = 1
@@ -57,6 +73,8 @@ func DefaultConfig() component.Config {
 		TimeoutSettings:  exporterhelper.NewDefaultTimeoutSettings(),
 		QueueSettings:    queueSettings,
 		ConnectionParams: map[string]string{},
+		AuthType:         defaultAuthType,
+		Endpoint:         defaultEndpoint,
 		Database:         defaultDatabase,
 		MetricsTable: TableConfig{
 			Name:            defaultMetricsTableName,
