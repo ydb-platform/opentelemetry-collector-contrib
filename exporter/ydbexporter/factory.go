@@ -19,7 +19,7 @@ import (
 func NewFactory() exporter.Factory {
 	return exporter.NewFactory(
 		metadata.Type,
-		DefaultConfig,
+		config.DefaultConfig,
 		exporter.WithLogs(createLogsExporter, metadata.LogsStability),
 		exporter.WithTraces(createTracesExporter, metadata.TracesStability),
 		exporter.WithMetrics(createMetricExporter, metadata.MetricsStability),

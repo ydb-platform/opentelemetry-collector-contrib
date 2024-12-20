@@ -95,7 +95,7 @@ func (f *Factory) BuildDB() (*DB, error) {
 	}
 
 	f.logger.Debug("creating connection to database", zap.String("dsn", dsn))
-	driver, err := ydb.Open(ctx, dsn, opts...)
+	driver, err := ydb.Open(ctx, "localhost:2136", opts...)
 	if err != nil {
 		return nil, err
 	}

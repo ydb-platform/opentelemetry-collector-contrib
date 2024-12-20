@@ -1,7 +1,6 @@
-package ydbexporter
+package config
 
 import (
-	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/config"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/ydbexporter/internal/metadata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,10 +15,10 @@ import (
 func TestLoadConfig(t *testing.T) {
 	t.Parallel()
 
-	cm, err := confmaptest.LoadConf(filepath.Join("testdata", "config.yaml"))
+	cm, err := confmaptest.LoadConf(filepath.Join("../../testdata", "config.yaml"))
 	require.NoError(t, err)
 
-	defaultCfg := WithDefaultConfig(func(c *config.Config) {
+	defaultCfg := WithDefaultConfig(func(c *Config) {
 		c.Endpoint = defaultEndpoint
 	})
 
@@ -35,7 +34,7 @@ func TestLoadConfig(t *testing.T) {
 		},
 		{
 			id: component.NewIDWithName(metadata.Type, "full"),
-			expected: &config.Config{
+			expected: &Config{
 				AuthType:          "accessToken",
 				Endpoint:          defaultEndpoint,
 				Username:          "foo",
@@ -54,17 +53,17 @@ func TestLoadConfig(t *testing.T) {
 					QueueSize:    100,
 					StorageID:    &storageID,
 				},
-				LogsTable: config.TableConfig{
+				LogsTable: TableConfig{
 					TTL:             72 * time.Hour,
 					Name:            "otel_logs",
 					PartitionsCount: 1,
 				},
-				TracesTable: config.TableConfig{
+				TracesTable: TableConfig{
 					TTL:             72 * time.Hour,
 					Name:            "otel_traces",
 					PartitionsCount: 1,
 				},
-				MetricsTable: config.TableConfig{
+				MetricsTable: TableConfig{
 					TTL:             72 * time.Hour,
 					Name:            "otel_metrics",
 					PartitionsCount: 1,
@@ -75,8 +74,7 @@ func TestLoadConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.id.String(), func(t *testing.T) {
-			factory := NewFactory()
-			cfg := factory.CreateDefaultConfig()
+			cfg := DefaultConfig()
 
 			sub, err := cm.Sub(tt.id.String())
 			require.NoError(t, err)

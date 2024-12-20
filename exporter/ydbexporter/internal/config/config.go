@@ -1,6 +1,7 @@
 package config
 
 import (
+	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/exporter/exporterhelper"
 	"time"
@@ -43,4 +44,52 @@ type Config struct {
 	LogsTable TableConfig `mapstructure:"logs_table"`
 	// TracesTable is the config for traces table.
 	TracesTable TableConfig `mapstructure:"traces_table"`
+}
+
+const (
+	defaultEndpoint         = "grpc://localhost:2136"
+	defaultAuthType         = "anonymous"
+	defaultDatabase         = "/local"
+	defaultLogsTableName    = "otel_logs"
+	defaultMetricsTableName = "otel_metrics"
+	defaultTracesTableName  = "otel_traces"
+	defaultPartitionsCount  = 64
+	defaultTTL              = 0
+)
+
+func WithDefaultConfig(fns ...func(*Config)) *Config {
+	cfg := DefaultConfig().(*Config)
+	for _, fn := range fns {
+		fn(cfg)
+	}
+	return cfg
+}
+
+func DefaultConfig() component.Config {
+	queueSettings := exporterhelper.NewDefaultQueueSettings()
+	queueSettings.NumConsumers = 1
+
+	return &Config{
+		TimeoutSettings:  exporterhelper.NewDefaultTimeoutSettings(),
+		QueueSettings:    queueSettings,
+		ConnectionParams: map[string]string{},
+		AuthType:         defaultAuthType,
+		Endpoint:         defaultEndpoint,
+		Database:         defaultDatabase,
+		MetricsTable: TableConfig{
+			Name:            defaultMetricsTableName,
+			TTL:             defaultTTL,
+			PartitionsCount: defaultPartitionsCount,
+		},
+		LogsTable: TableConfig{
+			Name:            defaultLogsTableName,
+			TTL:             defaultTTL,
+			PartitionsCount: defaultPartitionsCount,
+		},
+		TracesTable: TableConfig{
+			Name:            defaultTracesTableName,
+			TTL:             defaultTTL,
+			PartitionsCount: defaultPartitionsCount,
+		},
+	}
 }
